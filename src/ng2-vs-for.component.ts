@@ -1,5 +1,6 @@
 import {
   Directive,
+  Input,
   ViewContainerRef,
   TemplateRef,
   ElementRef,
@@ -30,7 +31,7 @@ function closestElement(el: Node, selector: string): HTMLElement {
   else {
     return null;
   }
-};
+}
 
 function getWindowScroll() {
   if ('pageYOffset' in window) {
@@ -85,55 +86,46 @@ function nextElementSibling(el) {
 }
 
 @Directive({
-  selector: '[vsFor]',
-  inputs: [
-    'originalCollection: vsFor',
-    'vsSize: vsForSize',
-    'vsOffsetAfter: vsForOffsetAfter',
-    'vsOffsetBefore: vsForOffsetBefore',
-    'vsExcess: vsForExcess',
-    'tagName: vsForTagName',
-    'vsScrollParent: vsForScrollParent',
-    '__horizontal: vsForHorizontal',
-    'vsAutoresize: vsForAutoresize'
-  ]
+  selector: '[vsFor]'
 })
 
-export class VsFor {
-  _originalCollection   = [];
-	_slicedCollection     = [];
-	originalLength        : number;
-	before                : HTMLElement;
-	after                 : HTMLElement;
-	view                  : EmbeddedViewRef<any>;
-	parent                : HTMLElement;
-	tagName               : string = 'div';
-	__horizontal          : boolean = false;
-	__autoSize            : boolean;
-	__options             : any;
-	scrollParent          : HTMLElement;
-	clientSize            : string;
-	offsetSize            : string;
-	scrollPos             : string;
-	totalSize             : number;
-	sizesCumulative       : number[];
-	sizes                 : number[];
-	elementSize           : number;
-	startIndex            : number;
-	endIndex              : number;
-	_prevStartIndex       : number;
-	_prevEndIndex         : number;
-	_minStartIndex        : number;
-	_maxEndIndex          : number;
-	onWindowResize        : any;
-	onZone							  : any;
+export class VsForComponent {
+  @Input('vsForSize') vsSize: any;
+  @Input('vsForOffsetBefore') vsOffsetBefore = 0;
+  @Input('vsForOffsetAfter') vsOffsetAfter = 0;
+  @Input('vsForExcess') vsExcess = 2;
+  @Input('vsForTagName') tagName: string = 'div';
+  @Input('vsForHorizontal') __horizontal: boolean = false;
+  @Input('vsForScrollParent') vsScrollParent: string;
+  @Input('vsAutoresize') vsAutoresize: boolean;
 
-	vsSize                : any;
-	vsOffsetBefore        : number = 0;
-	vsOffsetAfter         : number = 0;
-	vsExcess              : number = 2;
-  vsScrollParent        : string;
-  vsAutoresize          : boolean;
+  _originalCollection   = [];
+  _slicedCollection     = [];
+  originalLength        : number;
+  before                : HTMLElement;
+  after                 : HTMLElement;
+  view                  : EmbeddedViewRef<any>;
+  parent                : HTMLElement;
+  __autoSize            : boolean;
+  __options             : any;
+  scrollParent          : HTMLElement;
+  clientSize            : string;
+  offsetSize            : string;
+  scrollPos             : string;
+  totalSize             : number;
+  sizesCumulative       : number[];
+  sizes                 : number[];
+  elementSize           : number;
+  startIndex            : number;
+  endIndex              : number;
+  _prevStartIndex       : number;
+  _prevEndIndex         : number;
+  _minStartIndex        : number;
+  _maxEndIndex          : number;
+  onWindowResize        : any;
+  onZone			    : any;
+
+  @Input('vsFor')
   set originalCollection(value: any[]) {
     this._originalCollection = value || [];
     if (this.scrollParent) {

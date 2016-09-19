@@ -8,8 +8,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var core_1 = require('@angular/core');
-var dde = document.documentElement, matchingFunction = dde.matches ? 'matches' :
+const core_1 = require('@angular/core');
+const dde = document.documentElement, matchingFunction = dde.matches ? 'matches' :
     dde.matchesSelector ? 'matchesSelector' :
         dde.webkitMatches ? 'webkitMatches' :
             dde.webkitMatchesSelector ? 'webkitMatchesSelector' :
@@ -28,7 +28,6 @@ function closestElement(el, selector) {
         return null;
     }
 }
-;
 function getWindowScroll() {
     if ('pageYOffset' in window) {
         return {
@@ -73,31 +72,31 @@ function nextElementSibling(el) {
     } while (el && el.nodeType !== 1);
     return el;
 }
-var VsFor = (function () {
-    function VsFor(_element, _viewContainer, _templateRef, _renderer, _ngZone) {
-        var _this = this;
+let VsForComponent = class VsForComponent {
+    constructor(_element, _viewContainer, _templateRef, _renderer, _ngZone, _changeDetectorRef) {
         this._element = _element;
         this._viewContainer = _viewContainer;
         this._templateRef = _templateRef;
         this._renderer = _renderer;
         this._ngZone = _ngZone;
-        this._originalCollection = [];
-        this._slicedCollection = [];
-        this.tagName = 'div';
-        this.__horizontal = false;
+        this._changeDetectorRef = _changeDetectorRef;
         this.vsOffsetBefore = 0;
         this.vsOffsetAfter = 0;
         this.vsExcess = 2;
-        var _prevClientSize;
-        var reinitOnClientHeightChange = function () {
-            if (!_this.scrollParent) {
+        this.tagName = 'div';
+        this.__horizontal = false;
+        this._originalCollection = [];
+        this._slicedCollection = [];
+        let _prevClientSize;
+        const reinitOnClientHeightChange = () => {
+            if (!this.scrollParent) {
                 return;
             }
-            var ch = getClientSize(_this.scrollParent, _this.clientSize);
+            const ch = getClientSize(this.scrollParent, this.clientSize);
             if (ch !== _prevClientSize) {
                 _prevClientSize = ch;
-                _this._ngZone.run(function () {
-                    _this.refresh();
+                this._ngZone.run(() => {
+                    this.refresh();
                 });
             }
             else {
@@ -106,51 +105,43 @@ var VsFor = (function () {
         };
         this.onZone = this._ngZone.onStable.subscribe(reinitOnClientHeightChange);
     }
-    Object.defineProperty(VsFor.prototype, "originalCollection", {
-        get: function () {
-            return this._originalCollection;
-        },
-        set: function (value) {
-            this._originalCollection = value || [];
-            if (this.scrollParent) {
-                this.refresh();
-            }
-            else {
-                this.postDigest(this.refresh.bind(this));
-            }
-            // this.slicedCollection = value.slice(1, -1);
-            // this.view.setLocal('vsCollection', this.slicedCollection);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(VsFor.prototype, "slicedCollection", {
-        get: function () {
-            return this._slicedCollection;
-        },
-        set: function (value) {
-            this._slicedCollection = value;
-            this.view.context.vsCollection = this._slicedCollection;
-            // this.view.setLocal('vsCollection', this._slicedCollection);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    VsFor.prototype.ngOnChanges = function () {
+    set originalCollection(value) {
+        this._originalCollection = value || [];
         if (this.scrollParent) {
             this.refresh();
         }
         else {
             this.postDigest(this.refresh.bind(this));
         }
-    };
-    VsFor.prototype.postDigest = function (fn) {
-        var subscription = this._ngZone.onStable.subscribe(function () {
+        // this.slicedCollection = value.slice(1, -1);
+        // this.view.setLocal('vsCollection', this.slicedCollection);
+    }
+    get originalCollection() {
+        return this._originalCollection;
+    }
+    set slicedCollection(value) {
+        this._slicedCollection = value;
+        this.view.context.vsCollection = this._slicedCollection;
+        // this.view.setLocal('vsCollection', this._slicedCollection);
+    }
+    get slicedCollection() {
+        return this._slicedCollection;
+    }
+    ngOnChanges() {
+        if (this.scrollParent) {
+            this.refresh();
+        }
+        else {
+            this.postDigest(this.refresh.bind(this));
+        }
+    }
+    postDigest(fn) {
+        const subscription = this._ngZone.onStable.subscribe(() => {
             fn();
             subscription.unsubscribe();
         });
-    };
-    VsFor.prototype.initPlaceholders = function () {
+    }
+    initPlaceholders() {
         this.before = document.createElement(this.tagName);
         this.before.className = 'vsFor-before';
         this.after = document.createElement(this.tagName);
@@ -165,9 +156,8 @@ var VsFor = (function () {
             this.before.style.width = '100%';
             this.after.style.width = '100%';
         }
-    };
-    VsFor.prototype.ngOnInit = function () {
-        var _this = this;
+    }
+    ngOnInit() {
         // console.log(this.vsSize, this.vsOffsetBefore, this.vsOffsetAfter, this.vsExcess, this.vsScrollParent, this.vsAutoresize, this.tagName, this.__horizontal);
         this.view = this._viewContainer.createEmbeddedView(this._templateRef);
         this.parent = nextElementSibling(this._element.nativeElement);
@@ -191,19 +181,19 @@ var VsFor = (function () {
         }
         this.startIndex = 0;
         this.endIndex = 0;
-        this.scrollParent.addEventListener('scroll', function () {
-            _this.updateInnerCollection();
+        this.scrollParent.addEventListener('scroll', () => {
+            this.updateInnerCollection();
         });
-        this.onWindowResize = function () {
-            if (_this.vsAutoresize) {
-                _this.__autoSize = true;
-                _this._ngZone.run(function () {
-                    _this.setAutoSize();
+        this.onWindowResize = () => {
+            if (this.vsAutoresize) {
+                this.__autoSize = true;
+                this._ngZone.run(() => {
+                    this.setAutoSize();
                 });
             }
             else {
-                _this._ngZone.run(function () {
-                    _this.updateInnerCollection();
+                this._ngZone.run(() => {
+                    this.updateInnerCollection();
                 });
             }
         };
@@ -234,17 +224,16 @@ var VsFor = (function () {
         //         });
         //     }
         // });
-    };
-    VsFor.prototype.ngOnDestroy = function () {
+    }
+    ngOnDestroy() {
         if (this.onWindowResize) {
             window.removeEventListener('resize', this.onWindowResize);
         }
         if (this.onZone) {
             this.onZone.unsubscribe();
         }
-    };
-    VsFor.prototype.refresh = function () {
-        var _this = this;
+    }
+    refresh() {
         if (!this.originalCollection || this.originalCollection.length < 1) {
             this.slicedCollection = [];
             this.originalLength = 0;
@@ -254,21 +243,21 @@ var VsFor = (function () {
         else {
             this.originalLength = this.originalCollection.length;
             if (typeof this.vsSize !== 'undefined') {
-                this.sizes = this.originalCollection.map(function (item, index) {
-                    if (typeof _this.vsSize === 'function') {
-                        return _this.vsSize(item, index);
+                this.sizes = this.originalCollection.map((item, index) => {
+                    if (typeof this.vsSize === 'function') {
+                        return this.vsSize(item, index);
                     }
                     else {
-                        return +_this.vsSize; // number or string
+                        return +this.vsSize; // number or string
                     }
                 });
-                var sum_1 = 0;
-                this.sizesCumulative = this.sizes.map(function (size) {
-                    var res = sum_1;
-                    sum_1 += size;
+                let sum = 0;
+                this.sizesCumulative = this.sizes.map((size) => {
+                    const res = sum;
+                    sum += size;
                     return res;
                 });
-                this.sizesCumulative.push(sum_1);
+                this.sizesCumulative.push(sum);
             }
             else {
                 this.__autoSize = true;
@@ -276,11 +265,11 @@ var VsFor = (function () {
             }
         }
         this.reinitialize();
-    };
-    VsFor.prototype.updateTotalSize = function (size) {
+    }
+    updateTotalSize(size) {
         this.totalSize = this.vsOffsetBefore + size + this.vsOffsetAfter;
-    };
-    VsFor.prototype.reinitialize = function () {
+    }
+    reinitialize() {
         this._prevStartIndex = void 0;
         this._prevEndIndex = void 0;
         this._minStartIndex = this.originalLength;
@@ -289,18 +278,17 @@ var VsFor = (function () {
             this.sizesCumulative[this.originalLength] :
             this.elementSize * this.originalLength);
         this.updateInnerCollection();
-    };
-    VsFor.prototype.setAutoSize = function () {
-        var _this = this;
+    }
+    setAutoSize() {
         if (typeof this.vsSize !== 'undefined') {
-            this._ngZone.run(function () {
-                _this.refresh();
+            this._ngZone.run(() => {
+                this.refresh();
             });
         }
         else if (this.__autoSize) {
-            var gotSomething = false;
+            let gotSomething = false;
             if (this.parent.offsetHeight || this.parent.offsetWidth) {
-                var child = this.parent.children[1];
+                const child = this.parent.children[1];
                 if (child[this.offsetSize]) {
                     gotSomething = true;
                     this.elementSize = child[this.offsetSize];
@@ -308,18 +296,18 @@ var VsFor = (function () {
             }
             if (gotSomething) {
                 this.__autoSize = false;
-                this._ngZone.run(function () {
-                    _this.reinitialize();
+                this._ngZone.run(() => {
+                    this.reinitialize();
                 });
             }
         }
-    };
-    VsFor.prototype.updateInnerCollection = function () {
-        var $scrollPosition = getScrollPos(this.scrollParent, this.scrollPos);
-        var $clientSize = getClientSize(this.scrollParent, this.clientSize);
-        var scrollOffset = this.parent === this.scrollParent ? 0 : getScrollOffset(this.parent, this.scrollParent, this.__horizontal);
-        var __startIndex = this.startIndex;
-        var __endIndex = this.endIndex;
+    }
+    updateInnerCollection() {
+        const $scrollPosition = getScrollPos(this.scrollParent, this.scrollPos);
+        const $clientSize = getClientSize(this.scrollParent, this.clientSize);
+        const scrollOffset = this.parent === this.scrollParent ? 0 : getScrollOffset(this.parent, this.scrollParent, this.__horizontal);
+        let __startIndex = this.startIndex;
+        let __endIndex = this.endIndex;
         if (typeof this.vsSize !== 'undefined') {
             __startIndex = 0;
             while (this.sizesCumulative[__startIndex] < $scrollPosition - this.vsOffsetBefore - scrollOffset) {
@@ -345,7 +333,7 @@ var VsFor = (function () {
         this._maxEndIndex = Math.max(__endIndex, this._maxEndIndex);
         this.startIndex = this.__options.latch ? this._minStartIndex : __startIndex;
         this.endIndex = this.__options.latch ? this._maxEndIndex : __endIndex;
-        var digestRequired = false;
+        let digestRequired = false;
         if (this._prevStartIndex == null) {
             digestRequired = true;
         }
@@ -378,39 +366,65 @@ var VsFor = (function () {
             // $scope.$emit('vsRepeatInnerCollectionUpdated', this.startIndex, this.endIndex, this._prevStartIndex, this._prevEndIndex);
             this._prevStartIndex = this.startIndex;
             this._prevEndIndex = this.endIndex;
-            var o1 = this._getOffset(0);
-            var o2 = this._getOffset(this.slicedCollection.length);
+            const o1 = this._getOffset(0);
+            const o2 = this._getOffset(this.slicedCollection.length);
             var total = this.totalSize;
             var layoutProp = this.__horizontal ? 'width' : 'height';
             this.before.style[layoutProp] = o1 + 'px';
             this.after.style[layoutProp] = (total - o2) + 'px';
+            this._changeDetectorRef.markForCheck();
         }
         return digestRequired;
-    };
-    VsFor.prototype._getOffset = function (index) {
+    }
+    _getOffset(index) {
         if (typeof this.vsSize !== 'undefined') {
             return this.sizesCumulative[index + this.startIndex] + this.vsOffsetBefore;
         }
         return (index + this.startIndex) * this.elementSize + this.vsOffsetBefore;
-    };
-    VsFor = __decorate([
-        core_1.Directive({
-            selector: '[vsFor]',
-            inputs: [
-                'originalCollection: vsFor',
-                'vsSize: vsForSize',
-                'vsOffsetAfter: vsForOffsetAfter',
-                'vsOffsetBefore: vsForOffsetBefore',
-                'vsExcess: vsForExcess',
-                'tagName: vsForTagName',
-                'vsScrollParent: vsForScrollParent',
-                '__horizontal: vsForHorizontal',
-                'vsAutoresize: vsForAutoresize'
-            ]
-        }), 
-        __metadata('design:paramtypes', [core_1.ElementRef, core_1.ViewContainerRef, core_1.TemplateRef, core_1.Renderer, core_1.NgZone])
-    ], VsFor);
-    return VsFor;
-}());
-exports.VsFor = VsFor;
-//# sourceMappingURL=ng2-vs-for.js.map
+    }
+};
+__decorate([
+    core_1.Input('vsForSize'), 
+    __metadata('design:type', Object)
+], VsForComponent.prototype, "vsSize", void 0);
+__decorate([
+    core_1.Input('vsForOffsetBefore'), 
+    __metadata('design:type', Object)
+], VsForComponent.prototype, "vsOffsetBefore", void 0);
+__decorate([
+    core_1.Input('vsForOffsetAfter'), 
+    __metadata('design:type', Object)
+], VsForComponent.prototype, "vsOffsetAfter", void 0);
+__decorate([
+    core_1.Input('vsForExcess'), 
+    __metadata('design:type', Object)
+], VsForComponent.prototype, "vsExcess", void 0);
+__decorate([
+    core_1.Input('vsForTagName'), 
+    __metadata('design:type', String)
+], VsForComponent.prototype, "tagName", void 0);
+__decorate([
+    core_1.Input('vsForHorizontal'), 
+    __metadata('design:type', Boolean)
+], VsForComponent.prototype, "__horizontal", void 0);
+__decorate([
+    core_1.Input('vsForScrollParent'), 
+    __metadata('design:type', String)
+], VsForComponent.prototype, "vsScrollParent", void 0);
+__decorate([
+    core_1.Input('vsAutoresize'), 
+    __metadata('design:type', Boolean)
+], VsForComponent.prototype, "vsAutoresize", void 0);
+__decorate([
+    core_1.Input('vsFor'), 
+    __metadata('design:type', Array), 
+    __metadata('design:paramtypes', [Array])
+], VsForComponent.prototype, "originalCollection", null);
+VsForComponent = __decorate([
+    core_1.Directive({
+        selector: '[vsFor]'
+    }), 
+    __metadata('design:paramtypes', [core_1.ElementRef, core_1.ViewContainerRef, core_1.TemplateRef, core_1.Renderer, core_1.NgZone, core_1.ChangeDetectorRef])
+], VsForComponent);
+exports.VsForComponent = VsForComponent;
+//# sourceMappingURL=ng2-vs-for.component.js.map
