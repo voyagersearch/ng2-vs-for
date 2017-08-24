@@ -182,7 +182,10 @@ let VsForComponent = class VsForComponent {
         this.startIndex = 0;
         this.endIndex = 0;
         this.scrollParent.addEventListener('scroll', () => {
-            this.updateInnerCollection();
+            clearTimeout(this._timeout);
+            this._timeout = setTimeout(() => {
+                this.updateInnerCollection();
+            }, 0);
         });
         this.onWindowResize = () => {
             if (this.vsAutoresize) {
