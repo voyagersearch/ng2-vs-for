@@ -124,7 +124,8 @@ export class VsForComponent {
   _maxEndIndex          : number;
   onWindowResize        : any;
   onZone			    : any;
-
+  _timeout;
+  
   @Input('vsFor')
   set originalCollection(value: any[]) {
     this._originalCollection = value || [];
@@ -239,7 +240,10 @@ export class VsForComponent {
     this.endIndex = 0;
 
     this.scrollParent.addEventListener('scroll', () => {
-      this.updateInnerCollection();
+      clearTimeout(this._timeout);
+      this._timeout = setTimeout(() => {
+        this.updateInnerCollection();
+      }, 0);
     });
 
     this.onWindowResize = () => {
